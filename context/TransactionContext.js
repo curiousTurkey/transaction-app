@@ -1,54 +1,47 @@
-import { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from 'react';
+
+const staticTransactions = [
+  { id: '1', date: '2024-10-01', description: 'Salary Payment', amount: 5000, type: 'credit' },
+  { id: '2', date: '2024-10-05', description: 'Grocery Shopping', amount: -150, type: 'debit' },
+  { id: '3', date: '2024-10-10', description: 'Utility Bill', amount: -75, type: 'debit' },
+  { id: '4', date: '2024-10-12', description: 'Freelance Project', amount: 1200, type: 'credit' },
+  { id: '5', date: '2024-10-15', description: 'Dining Out', amount: -60, type: 'debit' },
+  { id: '6', date: '2024-10-18', description: 'Refund from Store', amount: 30, type: 'credit' },
+  { id: '7', date: '2024-10-20', description: 'Transportation', amount: -20, type: 'debit' },
+  { id: '8', date: '2024-10-22', description: 'Subscription Service', amount: -10, type: 'debit' },
+  { id: '9', date: '2024-10-25', description: 'Investment Gain', amount: 200, type: 'credit' },
+  { id: '10', date: '2024-10-28', description: 'Book Purchase', amount: -15, type: 'debit' },
+  { id: '11', date: '2024-10-29', description: 'Cash Deposit', amount: 1000, type: 'credit' },
+  { id: '12', date: '2024-10-30', description: 'Monthly Insurance Payment', amount: -120, type: 'debit' },
+];
+
+// Calculate summary
+const calculateSummary = (transactions) => {
+  const totalBalance = transactions.reduce((acc, txn) => acc + txn.amount, 0);
+  const totalCredits = transactions.filter((txn) => txn.type === 'credit').reduce((acc, txn) => acc + txn.amount, 0);
+  const totalDebits = transactions.filter((txn) => txn.type === 'debit').reduce((acc, txn) => acc + txn.amount, 0);
+
+  return {
+    totalBalance,
+    totalCredits,
+    totalDebits,
+  };
+};
 
 export const TransactionContext = createContext();
 
-const initialTransactions = [
-    { id: "TXN001", amount: 5000, type: "credit", description: "Salary Deposit", date: "2024-10-01" },
-    { id: "TXN002", amount: -1500, type: "debit", description: "Electricity Bill", date: "2024-10-05" },
-    { id: "TXN003", amount: -200, type: "debit", description: "Grocery Purchase", date: "2024-10-07" },
-    { id: "TXN004", amount: 1000, type: "credit", description: "Refund from Vendor", date: "2024-10-10" },
-    { id: "TXN005", amount: -500, type: "debit", description: "Restaurant", date: "2024-10-12" },
-    { id: "TXN006", amount: -2500, type: "debit", description: "Monthly Rent", date: "2024-10-15" },
-    { id: "TXN007", amount: 700, type: "credit", description: "Freelance Payment", date: "2024-10-18" },
-  ];
-  
-  const initialAccountSummary = {
-    accountHolderName: "John Doe",
-    accountNumber: "123456789",
-    accountType: "Savings",
-    balance: 5200,
-    lastUpdated: "2024-10-18",
-    totalCredits: 6700,
-    totalDebits: -5200,
-  };
+export const TransactionProvider = ({ children }) => {
+  const [transactions, setTransactions] = useState(staticTransactions);
+  const [summary, setSummary] = useState({});
 
-  export const TransactionProvider = ({ children }) => {
-    const [transactions, setTransactions] = useState(initialTransactions);
-    const [accountSummary, setAccountSummary] = useState(initialAccountSummary);
+  useEffect(() => {
+    const summaryData = calculateSummary(transactions);
+    setSummary(summaryData);
+  }, [transactions]);
 
-    const addTransaction = (transaction) => {
-        setTransactions((prevTransactions) => [...prevTransactions, transaction]);
-        
-        // Update account summary balance and totals
-        if (transaction.type === "credit") {
-          setAccountSummary((prevSummary) => ({
-            ...prevSummary,
-            balance: prevSummary.balance + transaction.amount,
-            totalCredits: prevSummary.totalCredits + transaction.amount,
-            lastUpdated: transaction.date,
-          }));
-        } else if (transaction.type === "debit") {
-          setAccountSummary((prevSummary) => ({
-            ...prevSummary,
-            balance: prevSummary.balance + transaction.amount,
-            totalDebits: prevSummary.totalDebits + transaction.amount,
-            lastUpdated: transaction.date,
-          }));
-        }
-      };
-      return (
-        <TransactionContext.Provider value = {{transactions, addTransaction, accountSummary}} >
-            {children}
-        </TransactionContext.Provider>
-      );
-  }
+  return (
+    <TransactionContext.Provider value={{ transactions, summary }}>
+      {children}
+    </TransactionContext.Provider>
+  );
+};

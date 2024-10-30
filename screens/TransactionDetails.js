@@ -5,7 +5,7 @@ import { TransactionContext } from '../context/TransactionContext';
 
 const TransactionDetailScreen = ({ route, navigation }) => {
   
-  const { transactionId } = route.params;
+  const { transactionId } = route.params
 
   
   const { transactions } = useContext(TransactionContext);
@@ -22,8 +22,7 @@ const TransactionDetailScreen = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <Button title="Back" onPress={() => navigation.goBack()} />
-        <Text style={styles.heading}>Details</Text>
+      <Text style={styles.heading}>Details</Text>  
       </View>
       <View style={styles.detailsContainer}>
         <Text style={styles.detailLabel}>Transaction ID:</Text>
@@ -56,8 +55,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     marginBottom: 16,
   },
   heading: {

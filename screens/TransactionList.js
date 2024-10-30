@@ -1,21 +1,22 @@
-
+// TransactionListScreen.js
 import React, { useContext } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { TransactionContext } from '../context/TransactionContext';
 
-const TransactionListScreen = () => {
-  
+const TransactionListScreen = ({ navigation }) => {
   const { transactions } = useContext(TransactionContext);
 
-  
   const renderTransaction = ({ item }) => (
-    <View style={styles.transactionRow}>
+    <TouchableOpacity
+      style={styles.transactionRow}
+      onPress={() => navigation.navigate('TransactionDetail', { transactionId: item.id })}
+    >
       <Text style={styles.date}>{item.date}</Text>
       <Text style={styles.description}>{item.description}</Text>
       <Text style={[styles.amount, item.type === 'credit' ? styles.credit : styles.debit]}>
         {item.type === 'credit' ? '+' : '-'}${Math.abs(item.amount)}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -30,8 +31,6 @@ const TransactionListScreen = () => {
     </View>
   );
 };
-
-export default TransactionListScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -79,3 +78,5 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
+
+export default TransactionListScreen;
